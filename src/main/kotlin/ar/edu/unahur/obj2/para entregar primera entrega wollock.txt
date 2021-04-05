@@ -1,0 +1,246 @@
+class Venta {
+	
+	"una lista de certificaciones"
+	var property certificaciones = []
+
+	"agrega un elemento a la lista de certificaciones y recibe como parametro un objeto del tipo certificacion"
+	method lograrCertificacion(certificacion) {
+		certificaciones.add(certificacion)
+	}
+
+	"devuelve un boolean"
+	method tieneAlmenosUnaCertificacionDeProductos() {
+		return certificaciones.any({ i => i.esSobreProducto() })
+	}
+	
+	"devuelve un boolean"
+	method tieneAlmenosUnaCertificacionQueNoEsSobreProductos() {
+		return certificaciones.any({ i => not i.esSobreProducto() })
+	}
+
+	"devuelve un boolean"
+	method esVersatil() {
+		return self.tieneAlmenosUnaCertificacionDeProductos() && self.tieneAlmenosUnaCertificacionQueNoEsSobreProductos() && certificaciones.size() >= 3
+	}
+
+	"devuelve un boolean"
+	method esFirme() {
+		return certificaciones.sum({ i => i.puntos() }) >= 30
+	}
+
+	"devuelve un int"
+	method puntosPorCertificaciones() {
+		return certificaciones.sum({ i => i.puntos() })
+	}
+
+	"devuelve un boolean y recibe un objeto del tipo ciudad"
+	method tieneAfinidadConCentro_(centro) {
+		return self.puedeTrabajar(centro.ciudadDondeEsta())
+	}
+
+	"devuelve un int"
+	method cantidadDeCertificacionesDeProductos(){
+		return certificaciones.count({i => i.esSobreProducto()})
+	}
+	
+	"devuelve un boolean y recibe un objeto del tipo ciudad"
+	method esCandidato(centro){
+		return self.esVersatil() && self.tieneAfinidadConCentro_(centro)
+	}
+	
+	"no hace nada aca"
+	method esInfluyente()
+
+	"no hace nada aca y recibe un objeto del tipo ciudad"
+	method puedeTrabajar(ciudad)
+
+	"no hace nada aca"
+	method esPersonaFisica()
+
+}
+
+class VendedorFijo inherits Venta {
+
+	"guarda un objeto del tipo ciudad"
+	var property ciudadDondeVive
+
+	"devuelve un boolean y recibe un objeto del tipo ciudad"
+	override method puedeTrabajar(ciudad) {
+		return self.ciudadDondeVive().equals(ciudad)
+	}
+
+	"devuelve un boolean"
+	override method esInfluyente() {
+		return false
+	}
+	
+	"devuelve un boolean"
+	override method esPersonaFisica(){
+		return true
+	}
+
+}
+
+class VendedorViajante inherits Venta {
+
+	"guarda una lista de objetos del tipo provincia"
+	const property provinciasDondeEstaHabilitado
+
+	"devuelve un boolean y recibe un objeto del tipo ciudad"
+	override method puedeTrabajar(ciudad) {
+		return provinciasDondeEstaHabilitado.contains(ciudad.provinciaDondeEsta())
+	}
+
+	"devuelve un boolean"
+	override method esInfluyente() {
+		return provinciasDondeEstaHabilitado.sum({ i => i.poblacion() }) >= 10000000
+	}
+	
+	"devuelve un boolean"
+	override method esPersonaFisica(){
+		return true
+	}
+}
+
+class ComercioCorresponsal inherits Venta {
+
+	"guarda una lista de objetos del tipo ciudad"
+	const property ciudadesDondeTieneSucursales
+
+	"devuelve un boolean y recibe como parametro un objeto del tipo ciudad"
+	override method puedeTrabajar(ciudad) {
+		return ciudadesDondeTieneSucursales.contains(ciudad)
+	}
+
+	"devuelve un boolean"
+	override method esInfluyente() {
+		return ciudadesDondeTieneSucursales.size() >= 5 || self.provinciasDeLaCiudadesDondeTieneSucursales().size() >= 3
+	}
+
+	"devuelve un boolean"
+	method provinciasDeLaCiudadesDondeTieneSucursales() {
+		return ciudadesDondeTieneSucursales.map({ i => i.provinciaDondeEsta() }).asSet()
+	}
+
+	"devuelve un boolean"
+	// no quedo muy clara la consigna
+	override method tieneAfinidadConCentro_(centro) {
+		return super(centro) && self.ciudadesDondeTieneSucursales().size() >= 1 && ciudadesDondeTieneSucursales.any({ i => not centro.puedeCubrirLaCiudad_(i) })
+	}
+
+	"devuelve un boolean"
+	override method esPersonaFisica(){
+		return false
+	}
+}
+
+class Ciudad {
+	
+	"guarda una variable del tipo String"
+	var property nombre
+	
+	"guarda una variable del tipo String"
+	var property provinciaDondeEsta
+
+}
+
+class Provincia {
+	
+	"guarda una variable del tipo String"
+	var property nombre
+	
+	"guarda una variable del tipo String"
+	var property poblacion
+
+}
+
+class Cliente {
+	
+	"no hace nada"
+	method puedeSerAtendido(vendedor)
+
+}
+
+class ClienteInseguro inherits Cliente {
+	
+	"devuelve un boolean y recibe un objeto del tipo vendedor"
+	override method puedeSerAtendido(vendedor){
+		return vendedor.esVersatil() && vendedor.esFirme() 
+	}
+}
+
+class ClienteDetallista inherits Cliente {
+	
+	"devuelve un boolean y recibe un objeto del tipo vendedor"
+	override method puedeSerAtendido(vendedor){
+		return vendedor.cantidadDeCertificacionesDeProductos() >= 3
+	}
+}
+
+class ClienteHumanista inherits Cliente {
+
+	"devuelve un boolean y recibe un objeto del tipo vendedor"
+	override method puedeSerAtendido(vendedor){
+		return vendedor.esPersonaFisica()
+	}
+}
+
+class Certificacion {
+	
+	"guarda una variable del tipo boolean"
+	var property esSobreProducto	
+	
+	"devuelve un int"
+	method puntos(){
+		if(self.esSobreProducto()){
+			return 10
+		}else{
+			return 6
+		}
+	}
+}
+
+import certificaciones.*
+
+class CentroDeDistribucion {
+	
+	"guarda un objeto del tipo ciudad"
+	var property ciudadDondeEsta
+	
+	"guarda una lista de objetos del tipo vendedor"
+	const property vendedores = []
+
+	"no devuelve nada y recibe un objeto del tipo vendedor"
+	method agregarUnVendedor(vendedor) {
+		if (not vendedores.contains(vendedor)) {
+			vendedores.add(vendedor)
+		} else {
+			self.error("ya esta registrado")
+		}
+	}
+
+	"devuelve un objeto del tipo vendedor"
+	method vendedorEstrella() {
+		return vendedores.max({ i => i.puntosPorCertificaciones() })
+	}
+
+	"devuelve un boolean"
+	method puedeCubrirLaCiudad_(ciudad){
+		return vendedores.any({i => i.puedeTrabajar(ciudad)})
+	}
+
+	"devuelve una lista de objetos del tipo vendedor"
+	method vendedoresGenerico(){
+		return vendedores.filter({i=>i.tieneAlmenosUnaCertificacionQueNoEsSobreProductos()})
+	}
+	
+	"devuelve un boolean"
+	method esRobusto(){
+		return vendedores.count({i => i.esFirme()}) >= 3
+	}
+
+	"no devuelve nada y recibe como parametro un boolean"
+	method repartirCertificaciones(esDeProducto){
+		vendedores.forEach({i => i.lograrCertificacion(new Certificacion(esSobreProducto = esDeProducto))})
+	}
+}
