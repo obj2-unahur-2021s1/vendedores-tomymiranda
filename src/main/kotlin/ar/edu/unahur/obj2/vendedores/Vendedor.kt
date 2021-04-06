@@ -51,7 +51,9 @@ class Viajante(val provinciasHabilitadas: List<Provincia>) : Vendedor() {
         return provinciasHabilitadas.contains(ciudad.provincia)
     }
 
-    override fun esInfluyente() = provinciasHabilitadas.sumBy{it.poblacion} >= 10000000
+    override fun esInfluyente() = this.provinciaHabilitadasDelViajante().sumBy{it.poblacion} >= 10000000
+
+    fun provinciaHabilitadasDelViajante() = provinciasHabilitadas.toSet()
 }
 
 class ComercioCorresponsal(val ciudades: List<Ciudad>) : Vendedor() {
@@ -63,21 +65,33 @@ class ComercioCorresponsal(val ciudades: List<Ciudad>) : Vendedor() {
         return ciudades.size >= 5 || this.provinciasDeLaCiudadesDondeTieneSucursales().size >= 3
     }
 
-    fun provinciasDeLaCiudadesDondeTieneSucursales() = ciudades.map{it.provincia}
+    fun provinciasDeLaCiudadesDondeTieneSucursales() = ciudades.map{it.provincia}.toSet()
 }
 
 class CentroDeDistribucion(val ciudadDondeEsta: Ciudad, val vendedores: MutableList<Vendedor> = mutableListOf<Vendedor>()) {
 
-    //en wollok este metodo devuelve un mensaje de error si no se agrego bien, por ende hago que devuelva un mensaje
-    fun agregarUnVendedor(vendedorAAgregrar: Vendedor) : String {
+
+    fun agregarUnVendedor(vendedorAAgregrar: Vendedor) {
+        /*
+
+        NOTA: deje comentada la forma original en la que habia planteado la resolucion en este punto
+
         var respuestaDeAgregar = "se agrego perfectamente"
+
         if (!vendedores.contains(vendedorAAgregrar)){
             vendedores.add(vendedorAAgregrar)
         }else{
             respuestaDeAgregar ="no se pudo agregar"
         }
         return respuestaDeAgregar
+        */
+
+        check(!vendedores.contains(vendedorAAgregrar)){
+            "no se agrego al vendedor"
+        }
+        vendedores.add(vendedorAAgregrar)
     }
+
 
     fun vendedorEstrella() : Vendedor? {
         return vendedores.maxBy{ it.puntajeCertificaciones()}

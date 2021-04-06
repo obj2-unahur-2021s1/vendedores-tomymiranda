@@ -48,13 +48,13 @@ class Venta {
 		return self.esVersatil() && self.tieneAfinidadConCentro_(centro)
 	}
 	
-	"no hace nada aca"
+	"no hace nada aca, es abstracto"
 	method esInfluyente()
 
-	"no hace nada aca y recibe un objeto del tipo ciudad"
+	"no hace nada aca y recibe un objeto del tipo ciudad, es abstracto"
 	method puedeTrabajar(ciudad)
 
-	"no hace nada aca"
+	"no hace nada aca, es abstracto"
 	method esPersonaFisica()
 
 }
@@ -156,7 +156,7 @@ class Provincia {
 
 class Cliente {
 	
-	"no hace nada"
+	"no hace nada, es abstracto"
 	method puedeSerAtendido(vendedor)
 
 }

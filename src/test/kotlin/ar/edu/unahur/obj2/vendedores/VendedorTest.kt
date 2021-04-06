@@ -1,6 +1,7 @@
 package ar.edu.unahur.obj2.vendedor
 
 import ar.edu.unahur.obj2.vendedores.*
+import io.kotest.assertions.throwables.shouldThrowAny
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -63,7 +64,8 @@ class VendedorTest : DescribeSpec({
   describe("ComercioCorresponsal"){
     val buenosAires = Provincia(4000000)
     val hurlingham = Ciudad(buenosAires)
-    val comercio = ComercioCorresponsal(listOf(hurlingham,sanIgnacio))
+    val moron = Ciudad(buenosAires)
+    val comercio = ComercioCorresponsal(listOf(hurlingham,sanIgnacio,moron))
 
     describe("puede trabajar en"){
       it("la ciudad en hurlingham"){
@@ -115,6 +117,9 @@ class VendedorTest : DescribeSpec({
 
       it("el vendedor estrella no es el viajante"){
         (centro.vendedorEstrella()==viajante).shouldBeFalse()
+      }
+      it("no se agregue un vendedor y rompe") {
+        shouldThrowAny { centro.agregarUnVendedor(viajante) }
       }
     }
   }
