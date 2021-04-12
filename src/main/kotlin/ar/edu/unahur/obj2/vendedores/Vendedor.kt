@@ -93,9 +93,8 @@ class CentroDeDistribucion(val ciudadDondeEsta: Ciudad, val vendedores: MutableL
     }
 
 
-    fun vendedorEstrella() : Vendedor? {
-        return vendedores.maxBy{ it.puntajeCertificaciones()}
-    }
+    fun vendedorEstrella() = vendedores.maxBy{ it.puntajeCertificaciones()}
+
 
     fun puedeCubrirLaCiudad_(ciudad: Ciudad) : Boolean{
         return vendedores.any{it.puedeTrabajarEn(ciudad)}
@@ -104,5 +103,10 @@ class CentroDeDistribucion(val ciudadDondeEsta: Ciudad, val vendedores: MutableL
     fun vendedoresGenericos() = vendedores.filter{ it.otrasCertificaciones() > 1}
 
     fun esRobusto() = vendedores.count{it.esFirme()} > 3
+
+    fun repartirCertificaciones(certificacionDada: Certificacion){
+        vendedores.forEach { it.agregarCertificacion(certificacionDada) }
+
+    }
 }
 
