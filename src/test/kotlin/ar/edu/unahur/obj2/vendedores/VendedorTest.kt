@@ -69,6 +69,23 @@ class VendedorTest : DescribeSpec({
         viajanteNuevo.esInfluyente().shouldBeTrue()
       }
     }
+    describe("es un vendedor"){it("es firme"){
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(false,2000))
+      viajante.agregarCertificacion(Certificacion(false,2000))
+
+      viajante.esFirme().shouldBeTrue()
+    }
+
+      it("es versatil"){
+        viajante.agregarCertificacion(Certificacion(true,5000))
+        viajante.agregarCertificacion(Certificacion(true,5000))
+        viajante.agregarCertificacion(Certificacion(false,2000))
+
+        viajante.esVersatil().shouldBeTrue()
+      }
+    }
   }
 
   describe("ComercioCorresponsal"){
@@ -86,14 +103,18 @@ class VendedorTest : DescribeSpec({
       }
     }
     describe("puede "){
-      it("no ser influyente"){
+      it("no ser influyente porq tiene 3 ciudades"){
         comercio.esInfluyente().shouldBeFalse()
       }
-      it("el nuevo comercio es influyente"){
+      it("el nuevo comercio es influyente porque tiene 3 provincias"){
         val nuevoComer = ComercioCorresponsal(listOf(hurlingham,sanIgnacio,moron,villaDolores))
         nuevoComer.esInfluyente().shouldBeTrue()
       }
-
+      it("el nuevo comercio es influyente porque tiene 5 ciudades"){
+        val obera = Ciudad(misiones)
+        val nuevoComer = ComercioCorresponsal(listOf(hurlingham,sanIgnacio,moron,villaDolores,obera))
+        nuevoComer.esInfluyente().shouldBeTrue()
+      }
       it("que las provincias donde esta son 2 por ende no es influyente "){
         (comercio.provinciasDeLaCiudadesDondeTieneSucursales().size ==2).shouldBeTrue()
       }
@@ -146,13 +167,13 @@ class VendedorTest : DescribeSpec({
 
           centro.esRobusto().shouldBeTrue()
         }
-      it("es firme el vendedor estrella"){
-        centro.repartirCertificaciones(Certificacion(true,500))
-        val estrella = centro.vendedorEstrella()
-        if (estrella != null) {
-          estrella.esFirme().shouldBeTrue()
+        it("es firme el vendedor estrella"){
+          centro.repartirCertificaciones(Certificacion(true,500))
+          val estrella = centro.vendedorEstrella()
+          if (estrella != null) {
+            estrella.esFirme().shouldBeTrue()
+          }
         }
-      }
     }
   }
 })
