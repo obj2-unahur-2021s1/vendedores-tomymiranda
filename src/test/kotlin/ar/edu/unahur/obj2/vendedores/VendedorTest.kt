@@ -85,7 +85,33 @@ class VendedorTest : DescribeSpec({
     }
 
     describe("es versatil"){
-
+      viajante.agregarCertificacion(certificacionProducto)
+      viajante.agregarCertificacion(certificacionProducto)
+      viajante.agregarCertificacion(certificacionDeNoProducto)
+      it("es versatil el vendedor viajante"){
+        viajante.esVersatil().shouldBeTrue()
+      }
+      it("tiene al menos 1 certificacion de producto"){
+        viajante.esVersatil().shouldBeTrue()
+      }
+      it("el viajante 3 no es versatil"){
+        viajante3.esVersatil().shouldBeFalse()
+      }
+      it("los puntos que tiene son 130"){
+        (viajante.puntajeCertificaciones() == 130).shouldBeTrue()
+      }
+      it("tiene 2 certificaciones de productos"){
+        (viajante.certificacionesDeProducto() == 2).shouldBeTrue()
+      }
+      it("tiene una certificacion de no producto"){
+        (viajante.otrasCertificaciones() == 1).shouldBeTrue()
+      }
+      it("no tiene 4 certificaciones de producto"){
+        (viajante.certificacionesDeProducto() == 4).shouldBeFalse()
+      }
+      it("no tiene 3 certificaciones de no producto"){
+        (viajante.otrasCertificaciones() == 3).shouldBeFalse()
+      }
     }
   }
 
@@ -104,22 +130,48 @@ class VendedorTest : DescribeSpec({
       }
     }
     describe("caso de ser influyentes "){
+      val obera = Ciudad(misiones)
+
+      val nuevoComer = ComercioCorresponsal(listOf(hurlingham,sanIgnacio,moron,villaDolores,obera))
+      val nuevoComer2 = ComercioCorresponsal(listOf(hurlingham,sanIgnacio,moron,villaDolores))
+
       it("no ser influyente porq tiene 3 ciudades"){
         comercio.esInfluyente().shouldBeFalse()
       }
       it("el nuevo comercio es influyente porque tiene 3 provincias"){
-        val nuevoComer = ComercioCorresponsal(listOf(hurlingham,sanIgnacio,moron,villaDolores))
-        nuevoComer.esInfluyente().shouldBeTrue()
+
+        nuevoComer2.esInfluyente().shouldBeTrue()
       }
       it("el nuevo comercio es influyente porque tiene 5 ciudades"){
-        val obera = Ciudad(misiones)
-        val nuevoComer = ComercioCorresponsal(listOf(hurlingham,sanIgnacio,moron,villaDolores,obera))
+
+
         nuevoComer.esInfluyente().shouldBeTrue()
       }
       it("que las provincias donde esta son 2 por ende no es influyente "){
         (comercio.provinciasDeLaCiudadesDondeTieneSucursales().size ==2).shouldBeTrue()
       }
     }
+    describe("caso de es firme"){
+      comercio.agregarCertificacion(certificacionProducto)
+      comercio.agregarCertificacion(certificacionProducto)
+      comercio.agregarCertificacion(certificacionDeNoProducto)
+      comercio.agregarCertificacion(certificacionDeNoProducto)
 
+      it("tiene un puntaje de certificacion mayor a 30"){
+        comercio.esFirme().shouldBeTrue()
+      }
+      it("tiene 2 certificaciones de producto"){
+        (comercio.certificacionesDeProducto() == 2).shouldBeTrue()
+      }
+      it("no tiene 4 certificaciones de producto"){
+        (comercio.certificacionesDeProducto() == 4).shouldBeFalse()
+      }
+      it("tiene 2 certificaciones de no producto"){
+        (comercio.otrasCertificaciones() == 2).shouldBeTrue()
+      }
+      it("no tiene 3 certificaciones de no producto"){
+        (comercio.otrasCertificaciones() == 3).shouldBeFalse()
+      }
+    }
   }
 })
