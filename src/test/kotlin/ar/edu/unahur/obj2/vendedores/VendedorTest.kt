@@ -12,10 +12,18 @@ class VendedorTest : DescribeSpec({
   val sanIgnacio = Ciudad(misiones)
   val cordoba = Provincia(2000000)
   val villaDolores = Ciudad(cordoba)
+  val buenosAires = Provincia(8000000)
+  val hurlingham = Ciudad(buenosAires)
+  val mendoza = Provincia(2500000)
+  val guaymallen = Ciudad(mendoza)
+
+  val certificacionProducto = Certificacion(true,50)
+  val certificacionDeNoProducto = Certificacion(false,30)
 
   describe("Vendedor fijo") {
     val obera = Ciudad(misiones)
     val vendedorFijo = VendedorFijo(obera)
+    val vendedorFijo2 = VendedorFijo(hurlingham)
 
     describe("puedeTrabajarEn") {
       it("su ciudad de origen") {
@@ -26,14 +34,17 @@ class VendedorTest : DescribeSpec({
       }
 
     }
-    describe("Vendedor fijo es un vendedor"){
-      it("es firme"){
-        vendedorFijo.agregarCertificacion(Certificacion(true,5000))
-        vendedorFijo.agregarCertificacion(Certificacion(true,5000))
-        vendedorFijo.agregarCertificacion(Certificacion(false,2000))
-        vendedorFijo.agregarCertificacion(Certificacion(false,2000))
+    describe("Vendedor fijo es"){
 
-        vendedorFijo.esFirme().shouldBeTrue()
+      it("es firme"){
+          vendedorFijo.agregarCertificacion(Certificacion(true,5000))
+          vendedorFijo.agregarCertificacion(Certificacion(true,5000))
+          vendedorFijo.agregarCertificacion(Certificacion(false,2000))
+          vendedorFijo.agregarCertificacion(Certificacion(false,2000))
+          vendedorFijo.esFirme().shouldBeTrue()
+      }
+      it("no es firme el vendedorFijo2"){
+          vendedorFijo2.esFirme().shouldBeFalse()
       }
 
       it("es versatil"){
@@ -43,83 +54,38 @@ class VendedorTest : DescribeSpec({
 
         vendedorFijo.esVersatil().shouldBeTrue()
       }
+
+      it("no es versatil el vendedorFijo2"){
+          vendedorFijo2.esVersatil().shouldBeFalse()
+      }
     }
   }
 
   describe("Viajante") {
-    val cordoba = Provincia(2000000)
-    val villaDolores = Ciudad(cordoba)
-    val viajante = Viajante(listOf(misiones))
-    val viajante2 = Viajante(listOf(cordoba))
-    val viajante3 = Viajante(listOf(cordoba))
+
+      val viajante = Viajante(listOf(misiones,buenosAires,cordoba))
+      val viajante2 = Viajante(listOf(cordoba))
+      val viajante3 = Viajante(listOf(misiones))
 
     describe("puedeTrabajarEn") {
       it("una ciudad que pertenece a una provincia habilitada") {
-        viajante.puedeTrabajarEn(sanIgnacio).shouldBeTrue()
+        viajante.puedeTrabajarEn(hurlingham).shouldBeTrue()
       }
       it("una ciudad que no pertenece a una provincia habilitada") {
-        viajante.puedeTrabajarEn(villaDolores).shouldBeFalse()
+        viajante.puedeTrabajarEn(guaymallen).shouldBeFalse()
       }
     }
-    describe("puede que"){
-      it("no es influyente porque la poblacion de las provincias no llega a 10M"){
-        viajante.esInfluyente().shouldBeFalse()
+    describe("es un trabajador"){
+      it("influyente porq la poblacion supera 10000000"){
+          viajante.esInfluyente().shouldBeTrue()
       }
-      it("el nuevo viajante es influyente porque la poblacion supera 10M"){
-        val buenosAires = Provincia(8000000)
-        val viajanteNuevo = Viajante(listOf(misiones,cordoba,buenosAires))
-        viajanteNuevo.esInfluyente().shouldBeTrue()
+      it("el vendedor 2 no es influyente porque la poblacion donde esta no supera 10000000 "){
+          viajante2.esInfluyente().shouldBeFalse()
       }
     }
-    describe("es un vendedor"){
-      it("es firme"){
-        viajante.agregarCertificacion(Certificacion(true,50))
-        viajante.agregarCertificacion(Certificacion(true,50))
-        viajante.agregarCertificacion(Certificacion(false,20))
 
-        viajante.esFirme().shouldBeTrue()
-      }
-      it("no seria firme"){
-          viajante2.esFirme().shouldBeFalse()
-      }
+    describe("es versatil"){
 
-      it("es versatil"){
-        viajante.agregarCertificacion(Certificacion(true,50))
-        viajante.agregarCertificacion(Certificacion(true,50))
-        viajante.agregarCertificacion(Certificacion(false,20))
-
-        viajante.esVersatil().shouldBeTrue()
-      }
-      it("no es versatil porque no tiene una certificacion que no es de producto"){
-          viajante2.agregarCertificacion(Certificacion(true,5000))
-          viajante2.agregarCertificacion(Certificacion(true,5000))
-          viajante2.agregarCertificacion(Certificacion(true,5000))
-
-          viajante2.esVersatil().shouldBeFalse()
-      }
-      it("no es versatil porque no tiene una certificacion de producto"){
-
-          viajante3.agregarCertificacion(Certificacion(false,5000))
-          viajante3.agregarCertificacion(Certificacion(false,5000))
-          viajante3.agregarCertificacion(Certificacion(false,5000))
-          viajante3.agregarCertificacion(Certificacion(false,5000))
-
-          viajante3.esVersatil().shouldBeFalse()
-      }
-
-    }
-    describe("las certificaciones que tenga"){
-        it("den un puntaje de 240"){
-
-            (viajante.puntajeCertificaciones()==240).shouldBeTrue()
-        }
-        it("sean 4 de de producto"){
-
-            (viajante.certificacionesDeProducto() == 4).shouldBeTrue()
-        }
-        it("sea 2 de no producto"){
-            (viajante.otrasCertificaciones() == 2).shouldBeTrue()
-        }
     }
   }
 
@@ -156,83 +122,4 @@ class VendedorTest : DescribeSpec({
     }
 
   }
-  //etapa3
-  describe("CentroDeDistribucion") {
-
-      val viajante = Viajante(listOf(misiones))
-      val viajante2 = Viajante(listOf(cordoba))
-      val viajanteNuevo = Viajante(listOf(misiones, cordoba))
-
-      val obera = Ciudad(misiones)
-      val vendedorFijo = VendedorFijo(obera)
-
-      vendedorFijo.agregarCertificacion(Certificacion(false,50))
-      vendedorFijo.agregarCertificacion(Certificacion(false,50))
-
-      val vendedoresDeCentro = mutableListOf<Vendedor>()
-      vendedoresDeCentro.add(viajante)
-      vendedoresDeCentro.add(viajante2)
-      vendedoresDeCentro.add(vendedorFijo)
-
-      val centro = CentroDeDistribucion(villaDolores, vendedoresDeCentro)
-
-      describe("puedeQue") {
-          it("los vendedores que tiene el centro son 4") {
-              (centro.vendedores.size == 3).shouldBeTrue()
-          }
-          it("se agrega un vendedor y ahora el centro tiene 4") {
-              centro.agregarUnVendedor(viajanteNuevo)
-              (centro.vendedores.size == 4).shouldBeTrue()
-          }
-          it("no se agregue un vendedor y rompe") {
-              shouldThrowAny { centro.agregarUnVendedor(viajante) }
-          }
-
-      }
-      describe("caso de vendedor estrella") {
-          it("el vendedor estrella es el vendedorFijo") {
-              (centro.vendedorEstrella() == vendedorFijo).shouldBeTrue()
-          }
-
-          it("el vendedor estrella no es el viajante") {
-              (centro.vendedorEstrella() == viajante).shouldBeFalse()
-          }
-      }
-      describe("caso de si es robusto"){
-            it("no es robusto el centro"){
-                centro.esRobusto().shouldBeFalse()
-            }
-            it("al repartir certificaciones se vuelve robusto"){
-
-                centro.repartirCertificaciones(Certificacion(true,50))
-
-                centro.esRobusto().shouldBeTrue()
-            }
-      }
-      describe("caso vendedor estrella firme"){
-            it("es firme el vendedor estrella"){
-                centro.repartirCertificaciones(Certificacion(true,500))
-                val estrella = centro.vendedorEstrella()
-                if (estrella != null) {
-                    estrella.esFirme().shouldBeTrue()
-                }
-            }
-            it("no es firme el vendedor estrella"){
-                val estrella = centro.vendedorEstrella()
-                if (estrella != null) {
-                    estrella.esFirme().shouldBeTrue()
-                }
-            }
-      }
-      describe("caso en genericos"){
-          it("el vendedorFijo es un vendedor generico"){
-                (centro.vendedoresGenericos() == listOf(vendedorFijo)).shouldBeTrue()
-            }
-          it("el viajante no es un vendedor generico"){
-            (centro.vendedoresGenericos() == listOf(viajante)).shouldBeFalse()
-          }
-      }
-
-    }
-
 })
