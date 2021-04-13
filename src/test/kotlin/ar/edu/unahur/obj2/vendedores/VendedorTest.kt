@@ -90,10 +90,39 @@ class VendedorTest : DescribeSpec({
 
         viajante.esVersatil().shouldBeTrue()
       }
-      it("no es versatil"){
-
+      it("no es versatil porque no tiene una certificacion que no es de producto"){
+        viajante.agregarCertificacion(Certificacion(true,5000))
+        viajante.esVersatil().shouldBeFalse()
       }
+      it("no es versatil porque no tiene una certificacion de producto"){
+        viajante.agregarCertificacion(Certificacion(false,5000))
+        viajante.esVersatil().shouldBeFalse()
+      }
+
     }
+  describe("las certificaciones que tenga"){
+    it("den un puntaje de 12K"){
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(false,2000))
+
+      ( viajante.puntajeCertificaciones()==12000).shouldBeTrue()
+    }
+    it("sean 2 de de producto"){
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(false,2000))
+
+      (viajante.certificacionesDeProducto() == 2).shouldBeTrue()
+    }
+    it("sea 1 de no producto"){
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(true,5000))
+      viajante.agregarCertificacion(Certificacion(false,2000))
+
+      (viajante.otrasCertificaciones() == 1).shouldBeTrue()
+    }
+  }
   }
 
   describe("ComercioCorresponsal"){
